@@ -93,12 +93,12 @@ public class UserController {
         // TODO : 로그인 값에 대한 validation 처리
         // TODO : 1. 이메일이 존재하는 이메일인지
         // TODO : 2. 계정 status 관리는 안하고 있지만, 하게 된다면 비활성화된 유저, 탈퇴한 유저 등으로 validation 처리 해줘야함.
-        try {
-            // validation
-            // createUser 메서드에서 새로운 유저를 생성시 등록한 이메일이 중복되는지를 검증하기위해 checkEmail 메서드를 사용하였지만,
-            // 로그인 시 입력한 이메일이 등록된 이메일인지 확인하는 로직은 없다.
-            // 따라서 Provider 단계에서
 
+        // TODO : JWT 생성 후 반환
+
+        try {
+            // validation 1. 이메일이 존재하는 이메일인지 - provider 에서
+            // validation 2. 비활성화, 유지, 탈퇴 계정 validation - provider 에서
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
         } catch (BaseException exception) {

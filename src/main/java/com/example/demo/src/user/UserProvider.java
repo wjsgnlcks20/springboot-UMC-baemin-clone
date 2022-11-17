@@ -41,19 +41,15 @@ public class UserProvider {
 
     // 로그인(password 검사)
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException {
-        User user;
-        String password;
 
         // 현재 로그인하려는 이메일이 DB에 존재하는지 validate
-        //
-        try {
-            user = userDao.getPwd(postLoginReq);
-        }catch(Exception exception) {
+        if(checkEmail(postLoginReq.getEmail()) == 0) {
             throw new BaseException(FAILED_TO_LOGIN);
-            // 이렇게 구성하면 userDao.getPwd 메서드를 쓰는 곳에 따라 에러 출력 처리를 다르게 해줘야 한다.
-            // 다시 말해 Dao를 사용하는 곳에서 Dao 내부가 어떤 오류를 발생시키고 그 오류에 상응하는 에러메시지를 throw 해줘야 한다는 것.
-            // 좋지 못한 구조다.
         }
+
+        User user = userDao.getPwd(postLoginReq);
+        String password;
+
         // 비밀번호 암호화
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(user.getPassword()); // 복호화
@@ -67,10 +63,10 @@ public class UserProvider {
 
         if (postLoginReq.getPassword().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
             int userIdx = userDao.getPwd(postLoginReq).getUserIdx();
-            return new PostLoginRes(userIdx);
+//            return new PostLoginRes(userIdx);
 //  *********** 해당 부분은 7주차 - JWT 수업 후 주석해제 및 대체해주세요!  **************** //
-//            String jwt = jwtService.createJwt(userIdx);
-//            return new PostLoginRes(userIdx,jwt);
+            String jwt = jwtService.createJwt(userIdx);
+            return new PostLoginRes(userIdx,jwt);
 //  **************************************************************************
 
         } else { // 비밀번호가 다르다면 에러메세지를 출력한다.
