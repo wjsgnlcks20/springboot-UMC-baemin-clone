@@ -58,6 +58,8 @@ public class UserProvider {
         } catch (Exception ignored) {
             throw new BaseException(PASSWORD_DECRYPTION_ERROR);
         }
+        System.out.println("input password : " + postLoginReq.getPassword());
+        System.out.println("saved password : " + password);
 
         if (postLoginReq.getPassword().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
             int userIdx = userDao.getPwd(postLoginReq).getUserIdx();

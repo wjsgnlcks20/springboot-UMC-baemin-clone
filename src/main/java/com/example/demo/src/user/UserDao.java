@@ -1,6 +1,7 @@
 package com.example.demo.src.user;
 
 
+import com.example.demo.config.BaseException;
 import com.example.demo.src.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -91,11 +92,24 @@ public class UserDao {
         return this.jdbcTemplate.update(modifyUserNameQuery, modifyUserNameParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0) 
     }
 
+    public int modifyUserPhoneNum(PatchUserReq patchUserReq) {
+        String modifyUserNameQuery = "update User set phoneNum = ? where userIdx = ? "; // 해당 userIdx를 만족하는 User의 해당 phoneNum 변경한다.
+        Object[] modifyUserNameParams = new Object[]{patchUserReq.getPhoneNum(), patchUserReq.getUserIdx()}; // 주입될 값들(phoneNum, userIdx) 순
+
+        return this.jdbcTemplate.update(modifyUserNameQuery, modifyUserNameParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
+    }
 
     // 로그인: 해당 email에 해당되는 user의 암호화된 비밀번호 값을 가져온다.
-    public User getPwd(PostLoginReq postLoginReq) {
-        String getPwdQuery = "select userIdx, password,email,nickname from User where email = ?"; // 해당 email을 만족하는 User의 정보들을 조회한다.
+    public User getPwd(PostLoginReq postLoginReq) throws BaseException {
+        String getPwdQuery = "select userIdx, password, email, nickname, phoneNum from User where email = ?"; // 해당 email을 만족하는 User의 정보들을 조회한다.
         String getPwdParams = postLoginReq.getEmail(); // 주입될 email값을 클라이언트의 요청에서 주어진 정보를 통해 가져온다.
+
+        // query에 메일이 존재하지 않는 다른 경우
+        // (getPwdQuery에 속성 하나를 빼고 적어 반환값에 포함이 되지 않았으나 rowMapper로 읽어오려고 한다던지 등)
+        // 이런 경우에 있을 에러와 이메일이 존재하지 않아서 발생하는 에러는 구분을 해야하는게 맞다.
+        // getPwd가 Exception을 throw 하도록 설계 해야함.
+
+        // 다만 위에서 제시된 두개의 다른 문제가 하나의 실행문에 동시 존재한다... 어떻게 구분해야하는가.
 
         return this.jdbcTemplate.queryForObject(getPwdQuery,
                 (rs, rowNum) -> new User(
@@ -141,7 +155,7 @@ public class UserDao {
             public GetUserRes mapRow(ResultSet rs, int rowNum) throws SQLException {
                 GetUserRes getUserRes = new GetUserRes();
                 getUserRes.setUserIdx(rs.getInt("userIdx"));
-                getUserRes.setEmail(rs.getString("userEmail"));
+                getUserRes.setEmail(rs.getString("email"));
                 getUserRes.setNickname(rs.getString("nickname"));
                 getUserRes.setPassword(rs.getString("password"));
                 getUserRes.setPhoneNum(rs.getString("phoneNUm"));

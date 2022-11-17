@@ -1,4 +1,4 @@
-package com.example.demo.src.user;
+package com.example.demo.utils;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;

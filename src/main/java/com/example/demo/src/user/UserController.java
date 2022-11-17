@@ -1,5 +1,7 @@
 package com.example.demo.src.user;
 
+import com.example.demo.config.BaseResponseStatus;
+import com.example.demo.utils.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.config.BaseException;
@@ -10,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 import static com.example.demo.config.BaseResponseStatus.*;
 import static com.example.demo.utils.ValidationRegex.*;
@@ -93,7 +94,7 @@ public class UserController {
         // TODO : 2. 계정 status 관리는 안하고 있지만, 하게 된다면 비활성화된 유저, 탈퇴한 유저 등으로 validation 처리 해줘야함.
         try {
             // validation
-            // 위의 createUser 메서드에서 새로운 유저를 생성시 등록한 이메일이 중복되는지를 검증하기위해 checkEmail 메서드를 사용하였지만,
+            // createUser 메서드에서 새로운 유저를 생성시 등록한 이메일이 중복되는지를 검증하기위해 checkEmail 메서드를 사용하였지만,
             // 로그인 시 입력한 이메일이 등록된 이메일인지 확인하는 로직은 없다.
 
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
@@ -161,23 +162,35 @@ public class UserController {
      */
     @ResponseBody
     @PatchMapping("/{userIdx}")
-    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
+    // 왜 Patch인데, 심지어 PatchUserRequest 도 만들어 두었는데 @RequestBody를 User로 받았을까...
+    // 이렇게 하면 User에 @NoArgsConstructor 설정해주던가 해야할텐데...
+    public BaseResponse<String> modify(@PathVariable("userIdx") int userIdx, @RequestBody PatchUserReq patchUserReq) {
+        // TODO : JWT를 탈취해서 회원 정보 수정 api에 접근할 수 있는 가능성이 있기 때문에 PATHVARIABLE로도 읽어와 Validation 처리를 해준다.
+
+        // 수정하려는 멤버 정보가 잘못 들어온 경우 -> validation을 통해 걸러줘야함.
+        // 문제는 수정이기 때문에 의도적으로 null 값도 인정한것이라면?
+        // 따라서 정규 표현식에 관해서만 확인해준다.
+
+        // 까지가 jwt를 배우기 이전의 validation 이었다면, 현재는 jwt claim 내부의 userIdx 값을 파싱해와 비교해 validation을 진행.
+        // 근데 아직도 왜 user를 사용하는지 이해가 안된다.
+//        if(patchUserReq.getPhoneNum() != null && !isRegexPhoneNum(patchUserReq.getPhoneNum())){
+//            return new BaseResponse<>(POST_USERS_INVALID_PHONENUM);
+//        }
         try {
-/**
-  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
-            //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
-            //같다면 유저네임 변경
-  **************************************************************************
- */
-            // 수정하려는 멤버 정보가 잘못 들어온 경우 -> validation을 통해 걸러줘야함.
-            // 문제는 수정이기 때문에 의도적으로 null 값도 인정한것이라면?
-            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getNickname());
-            userService.modifyUserName(patchUserReq);
+////  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
+//            //같다면 유저네임 변경
+////  **************************************************************************
+
+//            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getNickname(), user.getPhoneNum());
+//            근데 왜 이렇게 구현했을까? 매개변수로 받을때부터 수정할 정보만 받으면 되는데.
+
+            userService.modifyUser(patchUserReq);
 
             String result = "회원정보가 수정되었습니다.";
             return new BaseResponse<>(result);

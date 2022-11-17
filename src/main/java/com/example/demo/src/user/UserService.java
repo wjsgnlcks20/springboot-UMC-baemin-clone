@@ -69,12 +69,24 @@ public class UserService {
     }
 
     // 회원정보 수정(Patch)
-    public void modifyUserName(PatchUserReq patchUserReq) throws BaseException {
+    public void modifyUser(PatchUserReq patchUserReq) throws BaseException {
         try {
-            int result = userDao.modifyUserName(patchUserReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
-            if (result == 0) { // result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
-                throw new BaseException(MODIFY_FAIL_USERNAME);
+            int result;
+            System.out.println(patchUserReq.getNickname() + " , " + patchUserReq.getPhoneNum());
+            // patch 이므로 값이 수정하는 요소가 존재하지 않는다고 해서 에러가 아니기에 if문 처리해준다.
+            if(patchUserReq.getNickname() != null) {
+                result = userDao.modifyUserName(patchUserReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
+                if (result == 0) { // result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+                    throw new BaseException(MODIFY_FAIL_USERNAME);
+                }
             }
+            if(patchUserReq.getPhoneNum() != null){
+                result = userDao.modifyUserPhoneNum(patchUserReq);
+                if (result == 0) { // result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+                    throw new BaseException(MODIFY_FAIL_USERPHONENUM);
+                }
+            }
+            // 위에서 result 0인 경우에 대해서는 지정된 에러 반환시켰는데, result != 0이면서도 또 다른 에러가 발생 될 수 있는것인가?
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
         }
