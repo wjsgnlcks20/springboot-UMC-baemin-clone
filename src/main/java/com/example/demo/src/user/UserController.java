@@ -93,12 +93,12 @@ public class UserController {
         // TODO : 로그인 값에 대한 validation 처리
         // TODO : 1. 이메일이 존재하는 이메일인지
         // TODO : 2. 계정 status 관리는 안하고 있지만, 하게 된다면 비활성화된 유저, 탈퇴한 유저 등으로 validation 처리 해줘야함.
-
         // TODO : JWT 생성 후 반환
 
         try {
             // validation 1. 이메일이 존재하는 이메일인지 - provider 에서
             // validation 2. 비활성화, 유지, 탈퇴 계정 validation - provider 에서
+            // jwt 발행 및 반환. userService.logIn에서, postLoginRes 생성자로 jwt 주입해서.
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
         } catch (BaseException exception) {
@@ -136,7 +136,6 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
 
     /**
      * 회원 1명 조회 API
@@ -191,7 +190,8 @@ public class UserController {
 
 //            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getNickname(), user.getPhoneNum());
             // PatchUserReq를 @RequestBody로 받아왔으므로 생략
-
+            // 대신 Patch로 받은 json에 userIdx가 담겨있지 않을 수 있으므로
+            patchUserReq.setUserIdx(userIdx);
             userService.modifyUser(patchUserReq);
 
             String result = "회원정보가 수정되었습니다.";
