@@ -72,7 +72,8 @@ public class UserService {
     public void modifyUser(PatchUserReq patchUserReq) throws BaseException {
         try {
             int result;
-            System.out.println(patchUserReq.getNickname() + " , " + patchUserReq.getPhoneNum());
+
+            // nickname 수정
             // patch 이므로 값이 수정하는 요소가 존재하지 않는다고 해서 에러가 아니기에 if문 처리해준다.
             if(patchUserReq.getNickname() != null) {
                 result = userDao.modifyUserName(patchUserReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
@@ -80,6 +81,7 @@ public class UserService {
                     throw new BaseException(MODIFY_FAIL_USERNAME);
                 }
             }
+            // phoneNum 수정
             if(patchUserReq.getPhoneNum() != null){
                 result = userDao.modifyUserPhoneNum(patchUserReq);
                 if (result == 0) { // result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
@@ -91,4 +93,5 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
 }

@@ -45,10 +45,14 @@ public class UserProvider {
         String password;
 
         // 현재 로그인하려는 이메일이 DB에 존재하는지 validate
+        //
         try {
             user = userDao.getPwd(postLoginReq);
         }catch(Exception exception) {
             throw new BaseException(FAILED_TO_LOGIN);
+            // 이렇게 구성하면 userDao.getPwd 메서드를 쓰는 곳에 따라 에러 출력 처리를 다르게 해줘야 한다.
+            // 다시 말해 Dao를 사용하는 곳에서 Dao 내부가 어떤 오류를 발생시키고 그 오류에 상응하는 에러메시지를 throw 해줘야 한다는 것.
+            // 좋지 못한 구조다.
         }
         // 비밀번호 암호화
         try {
