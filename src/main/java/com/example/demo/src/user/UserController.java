@@ -1,16 +1,18 @@
 package com.example.demo.src.user;
 
 import com.example.demo.config.BaseResponseStatus;
+import com.example.demo.utils.JwtOwnerService;
+import com.example.demo.utils.JwtService;
 import com.example.demo.utils.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.user.model.*;
-import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -59,13 +61,12 @@ public class UserController {
      */
     // Body
     @ResponseBody
-    //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
-    @PostMapping("/sign-up")    // POST 방식의 요청을 매핑하기 위한 어노테이션
+    // @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
+    @PostMapping("/")    // POST 방식의 요청을 매핑하기 위한 어노테이션
     public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
-
         // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
         // 여기에서는 controller에서 직접 BaseResponseStatus 를 생성해 반환했다.
-        // 다만 validation이 다양해지며 코드가 길어지기에 validation 객체를 생성해 exception을 thorw 하는 형식으로 refactor 하면 어떨까.
+        // 다만 validation이 다양해지며 코드가 길어지기에 validation 객체를 생성해 exception을 throw 하는 형식으로 refactor 하면 어떨까.
         // Validation 클래스 생성, 리팩터링 하였음.
 
         try {
@@ -77,7 +78,7 @@ public class UserController {
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
         }catch(BaseException exception){
-            // 왜 그냥 BaseResponceStatus enum을 반환하지 않고 Exception으로 반환받아 전달하냐?
+            // 왜 그냥 BaseResponseStatus enum을 반환하지 않고 Exception으로 반환받아 전달하냐?
             // 그야 Exception 을 throw 해야하니까... Exception 클래스를 상속받을 객체를 만들어줘야지...
             return new BaseResponse<>(exception.getStatus());
         }
@@ -182,8 +183,14 @@ public class UserController {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
+            //다르다면 접근 권한이 없는 상태로 api 호출
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            Date expirationDate = jwtService.getExpiration();
+            Date now = new Date(System.currentTimeMillis());
+            if(now.after(expirationDate)){
+                return new BaseResponse<>(INVALID_JWT);
             }
             //같다면 유저네임 변경
             /************************************************/

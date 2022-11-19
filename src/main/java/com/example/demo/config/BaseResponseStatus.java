@@ -21,6 +21,7 @@ public enum BaseResponseStatus {
     EMPTY_JWT(false, 2001, "JWT를 입력해주세요."),
     INVALID_JWT(false, 2002, "유효하지 않은 JWT입니다."),
     INVALID_USER_JWT(false,2003,"권한이 없는 유저의 접근입니다."),
+    INVALID_OWNER_JWT(false,2004,"권한이 없는 유저의 접근입니다.(개인의 가게만 생성, 수정 삭제 가능)"),
 
     // users
     USERS_EMPTY_USER_ID(false, 2010, "유저 아이디 값을 확인해주세요."),
@@ -35,6 +36,7 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PHONENUM(false, 2025, "전화번호를 입력해주세요."),
     POST_USERS_INVALID_PHONENUM(false, 2026, "전화번호 형식을 확인해주세요."),
     POST_USERS_EXISTS_PHONENUM(false,2027,"중복된 전화번호입니다."),
+
 
 
     /**
@@ -58,6 +60,12 @@ public enum BaseResponseStatus {
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
     MODIFY_FAIL_USERPHONENUM(false,4015,"유저 전화번호 수정 실패"),
+    MODIFY_FAIL_MENU(false,4020,"메뉴 수정 실패"),
+    MODIFY_FAIL_RESTAURANT(false,4022,"가게 수정 실패"),
+
+    // 삭제
+    DELETE_FAIL_MENU(false,4030,"메뉴 삭제 실패"),
+    DELETE_FAIL_RESTAURANT(false,4032,"가게 삭제 실패"),
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");

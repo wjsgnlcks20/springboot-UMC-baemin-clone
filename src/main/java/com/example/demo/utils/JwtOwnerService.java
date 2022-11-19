@@ -17,7 +17,7 @@ import java.util.Date;
 import static com.example.demo.config.BaseResponseStatus.*;
 
 @Service
-public class JwtService {
+public class JwtOwnerService {
 
     /**
      * JWT 생성
@@ -27,16 +27,12 @@ public class JwtService {
     public String createJwt(int userIdx){
         final int expirationTimeInMill = 1*(1000*60*60*24*365);
         Date now = new Date();
-        Claims claims = Jwts.claims()
-                .setSubject("access_token");
-        claims.put("userIdx", userIdx);
-
         return Jwts.builder()
                 .setHeaderParam("type","jwt")
-                .setClaims(claims)
+                .claim("userIdx",userIdx)
                 .setIssuedAt(now)
                 .setExpiration(new Date(System.currentTimeMillis()+ expirationTimeInMill))
-                .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, Secret.JWT_OWNER_SECRET_KEY)
                 .compact();
     }
 
@@ -80,12 +76,11 @@ public class JwtService {
         Jws<Claims> claims;
         try{
             claims = Jwts.parser()
-                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .setSigningKey(Secret.JWT_OWNER_SECRET_KEY)
                     .parseClaimsJws(accessToken);
         } catch(Exception ignored){
             throw new BaseException(INVALID_JWT);
         }
         return claims;
     }
-
 }

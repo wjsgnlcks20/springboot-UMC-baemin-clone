@@ -1,15 +1,15 @@
 package com.example.demo.src.restautrant.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @AllArgsConstructor
-public class Restaurant {
-    private int restaurantIdx;
+@NoArgsConstructor
+public class PostRestReq {
     private int ownerIdx;
     private String name;
     private String category;

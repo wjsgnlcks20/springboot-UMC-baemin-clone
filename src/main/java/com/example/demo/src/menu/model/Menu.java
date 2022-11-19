@@ -1,19 +1,18 @@
-package com.example.demo.src.restautrant.model;
-
+package com.example.demo.src.menu.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.stereotype.Service;
 
-@Setter
 @Getter
+@Service
+@AllArgsConstructor
 @NoArgsConstructor
-public class PatchRestReq {
+public class Menu {
+    private int menuIdx;
     private int restaurantIdx;
     private String name;
-    private String category;
-    private int minimumPaymentCost;
+    private int price;
     private String imageUrl;
 }
-
