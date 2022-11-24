@@ -26,12 +26,12 @@ public class MenuProvider {
             return getMenuResList;
         }
         catch(Exception exception){
-            try{
-                return menuDao.getAllMenu();
-            }
-            catch(Exception exception1){
-                throw new BaseException(DATABASE_ERROR);
-            }
+//            try{
+//                return menuDao.getAllMenu();
+//            }
+//            catch(Exception exception1){
+            throw new BaseException(DATABASE_ERROR);
+//            }
         }
     }
 

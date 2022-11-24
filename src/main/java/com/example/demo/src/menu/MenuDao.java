@@ -56,7 +56,6 @@ public class MenuDao {
     }
 
     public List<GetMenuRes> getAllMenu() {
-        System.out.println("test1");
         String getMenuByRestaurantIdQuery = "select * from Menu"; // 해당 이메일을 만족하는 유저를 조회하는 쿼리문
         return this.jdbcTemplate.query(getMenuByRestaurantIdQuery,
                 getRestResRowMapper() // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기

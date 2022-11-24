@@ -41,7 +41,8 @@ public class RestaurantController{
 
     // 전체 가게 조회(카테고리 파라미터로 같은 카테고리만 검색 가능)
     @GetMapping("/restaurants")
-    public BaseResponse<List<GetRestRes>> getRestaurants(@RequestParam(required = false) String category, Integer startIdx){
+    public BaseResponse<List<GetRestRes>> getRestaurants(@RequestParam(required = false) String category,
+                                                         @RequestParam(required = false, defaultValue = "0") Integer startIdx){
         try {
             List<GetRestRes> getRestRes = restaurantProvider.getRestaurants(category);
             if(startIdx != null){
